@@ -1,0 +1,12 @@
+services:
+  server:
+    image: somyeongzzang/server
+    command: ["python", "-u", "./server.py"]
+    environment:
+      SERVER_LISTEN_URI: tcp://0.0.0.0:5555
+
+  client:
+    image: somyeongzzang/client
+    command: ["python", "-u", "./client.py"]
+    environment:
+      SERVER_CONNECT_URI: tcp://server:5555

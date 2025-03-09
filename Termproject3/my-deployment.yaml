@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+      - name: server
+        image: somyeongzzang/server
+        command: ["python", "-u", "./server.py"]
+        env:
+        - name: SERVER_LISTEN_URI
+          value: "tcp://0.0.0.0:5555"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-service
+spec:
+  selector:
+    app: server
+  ports:
+  - protocol: TCP
+    port: 5555
+    targetPort: 5555
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+      - name: client
+        image: somyeongzzang/client
+        command: ["python", "-u", "./client.py"]
+        env:
+        - name: SERVER_CONNECT_URI
+          value: "tcp://server-service:5555"
+
